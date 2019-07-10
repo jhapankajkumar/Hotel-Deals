@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import '../Helper/Constants.dart';
 
-var dropDownStyle = TextStyle(color: Colors.white, fontSize: 16.0);
-var dropDownItemStyle = TextStyle(color: Colors.black, fontSize: 18.0);
 class LocationDropDownMenu extends StatefulWidget {
   final List<String> cities;
   LocationDropDownMenu(this.cities);
@@ -45,7 +44,7 @@ class _LocationDropDownMenuState extends State<LocationDropDownMenu> {
               children: <Widget>[
                 Text(
                   selectedCity,
-                  style: dropDownStyle,
+                  style: Constant.dropDownStyle,
                 ),
                 Icon(
                   Icons.keyboard_arrow_down,
@@ -57,7 +56,7 @@ class _LocationDropDownMenuState extends State<LocationDropDownMenu> {
               return widget.cities.map((String value) {
                 return PopupMenuItem<String>(
                   value: value,
-                  child: Text(value,style: dropDownItemStyle),
+                  child: Text(value,style: Constant.dropDownItemStyle),
                 );
               }).toList();
             },
