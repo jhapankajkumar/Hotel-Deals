@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hotel_deals/Common/CustomShapeClipper.dart';
 import 'package:hotel_deals/CustomView/FlightListCell.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hotel_deals/Model/flight.dart';
+
 
 // import '../Helper/Constants.dart';
 
@@ -20,29 +23,77 @@ class FlightListScreen extends StatelessWidget {
         ),
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
-                  child: Column(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               FlightListTopPart(),
-              SizedBox(height: 10,),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 32,vertical: 10),
-                child: Text('Best Deals for Next 6 months',style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold, color: Colors.black),),
+              SizedBox(
+                height: 10,
               ),
               Container(
-                child: ListView(
-                  shrinkWrap: true,
-                  physics: ClampingScrollPhysics(),
-                  scrollDirection: Axis.vertical,
-                  children: flightCards,
+                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 10),
+                child: Text(
+                  'Best Deals for Next 6 months',
+                  style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black),
                 ),
               ),
+
+              StreamBuilder<QuerySnapshot>(
+                  stream: Firestore.instance.collection('deals').snapshots(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.data != null) {
+                      return _buildDetailList(context, snapshot.data.documents);
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  }),
+
+              //Container(
+              //child:
+              // ListView(
+              //   shrinkWrap: true,
+              //   physics: ClampingScrollPhysics(),
+              //   scrollDirection: Axis.vertical,
+              //   children: flightCards,
+              // ),
+              //),
             ],
           ),
         ));
   }
+}
+
+Widget _buildDetailList(
+    BuildContext context, List<DocumentSnapshot> snapshots) {
+  
+  print(snapshots.length);
+  return Container(
+    child: ListView.builder(
+      itemCount: snapshots.length,
+      shrinkWrap: true,
+      physics: ClampingScrollPhysics(),
+      scrollDirection: Axis.vertical,
+      itemBuilder: (context, index) {
+        DocumentSnapshot document = snapshots[index];
+        String discount  = document.data['discount'] ;
+        String rating  = document.data['rating'] ;
+        String date  = document.data['date'] ;
+        String airlines  = document.data['airlines'] ;
+        int oldPrice  = document.data['oldPrice'] ;
+        int newPrice  = document.data['newPrice'] ;
+        Flight flight = Flight(discount: discount, rating: rating, flightName: airlines,oldPrice: oldPrice, newPrice: newPrice,date: date);
+        return FlightListCell(flight: flight,);
+      },
+    ),
+  );
 }
 
 class FlightListTopPart extends StatelessWidget {
@@ -86,8 +137,7 @@ class FlightListTopPart extends StatelessWidget {
                               'Boston (BOS)',
                               style: TextStyle(fontSize: 16.0),
                             ),
-                            Divider(
-                                 color: Colors.grey, height: 20.0),
+                            Divider(color: Colors.grey, height: 20.0),
                             Text(
                               'New York City (JFK)',
                               style: TextStyle(
@@ -99,7 +149,7 @@ class FlightListTopPart extends StatelessWidget {
                       Spacer(),
                       Expanded(
                         flex: 1,
-                                              child: Icon(
+                        child: Icon(
                           Icons.import_export,
                           color: Colors.black,
                           size: 32,
@@ -121,77 +171,3 @@ class FlightList extends StatelessWidget {
     return Container();
   }
 }
-
-List<FlightListCell> flightCards = [
-  FlightListCell(
-    date: 'Feb 2009',
-    discount: '45%',
-    oldPrice: '\$67387',
-    price: '\$4563',
-    flightName: 'Cathay Pacific',
-    rating: '4.9',
-  ),
-  FlightListCell(
-    date: 'June 2018',
-    discount: '12%',
-    oldPrice: '\$67387',
-    price: '\$4563',
-    flightName: 'Emirates',
-    rating: '4.8',
-  ),
-  FlightListCell(
-    date: 'Apr 2007',
-    discount: '13%',
-    oldPrice: '\$67387',
-    price: '\$4563',
-    flightName: 'Air India',
-    rating: '4.5',
-  ),
-  FlightListCell(
-    date: 'Nov 2009',
-    discount: '32%',
-    oldPrice: '\$67387',
-    price: '\$4563',
-    flightName: 'Jet Airways',
-    rating: '4.0',
-  ),
-  FlightListCell(
-    date: 'Jan 2012',
-    discount: '21%',
-    oldPrice: '\$67387',
-    price: '\$4563',
-    flightName: 'Singapore Airlines',
-    rating: '4.8',
-  ),
-  FlightListCell(
-    date: 'Jan 2012',
-    discount: '21%',
-    oldPrice: '\$67387',
-    price: '\$4563',
-    flightName: 'Singapore Airlines',
-    rating: '4.8',
-  ),
-  FlightListCell(
-    date: 'Jan 2012',
-    discount: '21%',
-    oldPrice: '\$67387',
-    price: '\$4563',
-    flightName: 'Singapore Airlines',
-    rating: '4.8',
-  ),FlightListCell(
-    date: 'Jan 2012',
-    discount: '21%',
-    oldPrice: '\$67387',
-    price: '\$4563',
-    flightName: 'Singapore Airlines',
-    rating: '4.8',
-  ),
-  FlightListCell(
-    date: 'Jan 2012',
-    discount: '21%',
-    oldPrice: '\$67387',
-    price: '\$4563',
-    flightName: 'Singapore Airlines',
-    rating: '4.8',
-  )
-];

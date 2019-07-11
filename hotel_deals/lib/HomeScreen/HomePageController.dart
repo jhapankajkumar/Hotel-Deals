@@ -29,6 +29,8 @@ class _MyHomePageState extends State<MyHomePageController> {
           children: <Widget>[
             HomeScreenTopContainer(),
             homeScreenBottomContainer,
+            homeScreenBottomContainer,
+            SizedBox(height: 20,)
           ],
         ),
       ),
