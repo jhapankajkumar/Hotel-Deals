@@ -55,16 +55,6 @@ class FlightListScreen extends StatelessWidget {
                       );
                     }
                   }),
-
-              //Container(
-              //child:
-              // ListView(
-              //   shrinkWrap: true,
-              //   physics: ClampingScrollPhysics(),
-              //   scrollDirection: Axis.vertical,
-              //   children: flightCards,
-              // ),
-              //),
             ],
           ),
         ));
@@ -82,15 +72,7 @@ Widget _buildDetailList(
       physics: ClampingScrollPhysics(),
       scrollDirection: Axis.vertical,
       itemBuilder: (context, index) {
-        DocumentSnapshot document = snapshots[index];
-        String discount  = document.data['discount'] ;
-        String rating  = document.data['rating'] ;
-        String date  = document.data['date'] ;
-        String airlines  = document.data['airlines'] ;
-        int oldPrice  = document.data['oldPrice'] ;
-        int newPrice  = document.data['newPrice'] ;
-        Flight flight = Flight(discount: discount, rating: rating, flightName: airlines,oldPrice: oldPrice, newPrice: newPrice,date: date);
-        return FlightListCell(flight: flight,);
+        return FlightListCell(flight: Flight.fromSnapshot(snapshots[index]),);
       },
     ),
   );

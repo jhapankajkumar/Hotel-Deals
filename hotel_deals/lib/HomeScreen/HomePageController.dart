@@ -1,12 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hotel_deals/HomeScreen/LocationDropDownMenu.dart';
 import 'package:hotel_deals/HomeScreen/SearchTextFieldContainer.dart';
+import 'package:hotel_deals/Model/city.dart';
+import 'package:hotel_deals/Model/location.dart';
 import '../CustomView/ChoiceChipContainerView.dart';
 import '../CustomView/CustomTabBar.dart';
 import '../Common/CustomShapeClipper.dart';
-import '../CustomView/CityCards.dart';
+import '../CustomView/CityCard.dart';
 import '../Helper/Constants.dart';
-
 
 List<String> locations = ['Boston (BOS)', 'New York City (JFK)'];
 
@@ -25,12 +27,14 @@ class _MyHomePageState extends State<MyHomePageController> {
       bottomNavigationBar: CustomTabBar(),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
-              child: Column(
+        child: Column(
           children: <Widget>[
             HomeScreenTopContainer(),
             homeScreenBottomContainer,
             homeScreenBottomContainer,
-            SizedBox(height: 20,)
+            SizedBox(
+              height: 20,
+            )
           ],
         ),
       ),
@@ -49,9 +53,14 @@ var desc = Text(
   textAlign: TextAlign.center,
 );
 
-class _HomeScreenTopContainerState extends State<HomeScreenTopContainer> {
-  var selectedIndex = 0;
 
+class _HomeScreenTopContainerState extends State<HomeScreenTopContainer> {
+  Location selectedCity;
+  void citySelected(Location city) {
+      setState(() {
+        selectedCity = city;
+      });
+  }
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -69,7 +78,20 @@ class _HomeScreenTopContainerState extends State<HomeScreenTopContainer> {
                   height: 50,
                 ),
                 //DropDownMenu
-                LocationDropDownMenu(locations),
+                StreamBuilder<QuerySnapshot>(
+                    stream:
+                        Firestore.instance.collection('locations').snapshots(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.data != null) {
+                        return _buildLocations(
+                            context, snapshot.data.documents);
+                      } else {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    }),
                 SizedBox(
                   height: 40,
                 ),
@@ -96,6 +118,12 @@ class _HomeScreenTopContainerState extends State<HomeScreenTopContainer> {
   }
 }
 
+Widget _buildLocations(BuildContext context, List<DocumentSnapshot> snapshots) {
+  var locations =
+      snapshots.map((snapshot) => Location.fromSnapshot(snapshot)).toList();
+  return LocationDropDownMenu(locations);
+}
+
 var homeScreenBottomContainer = Column(
   children: <Widget>[
     Padding(
@@ -114,29 +142,37 @@ var homeScreenBottomContainer = Column(
           Spacer(),
           Text(
             'VIEW ALL (4)',
-            style: TextStyle(fontSize: 18.0, color: Constant.appTheme.primaryColor),
+            style: TextStyle(
+                fontSize: 18.0, color: Constant.appTheme.primaryColor),
           ),
         ],
       ),
     ),
-    Container(
-      // color: Colors.blueAccent,
-      height: 240,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: cityCards,
-      ),
-    )
+    StreamBuilder<QuerySnapshot>(
+        stream: Firestore.instance.collection('cities').snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.data != null) {
+            return _buildCities(context, snapshot.data.documents);
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        }),
   ],
 );
 
-List<CityCard> cityCards = [
-  CityCard('assets/images/lasvegas.jpg', 'Las Vegas', 'Feb 219', '45', '2250.00',
-      '3423.00'),
-  CityCard(
-      'assets/images/athens.jpeg', 'Athens', 'Mar 2016', '10', '4563.00', '3423.00'),
-  CityCard(
-      'assets/images/sydeny.jpg', 'Sydeny', 'Apr 2009', '19', '4563.00', '3423.00'),
-  CityCard(
-      'assets/images/pic1.jpeg', 'Pic1', 'May 2013', '22', '4563.00', '3423.00'),
-];
+Widget _buildCities(BuildContext context, List<DocumentSnapshot> snapshots) {
+  return Container(
+    height: 240,
+    child: ListView.builder(
+      scrollDirection: Axis.horizontal,
+      itemCount: snapshots.length,
+      itemBuilder: (context, index) {
+        return CityCard(
+          city: City.fromSnapshot(snapshots[index]),
+        );
+      },
+    ),
+  );
+}

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_deals/Model/location.dart';
 import '../Helper/Constants.dart';
 
 class LocationDropDownMenu extends StatefulWidget {
-  final List<String> cities;
+  final List<Location> cities;
   LocationDropDownMenu(this.cities);
 
   @override
@@ -11,7 +12,7 @@ class LocationDropDownMenu extends StatefulWidget {
 
 class _LocationDropDownMenuState extends State<LocationDropDownMenu> {
   var selectedIndex = 0;
-  var selectedCity = '';
+  Location selectedCity;
 
   @override
   void initState() {
@@ -43,7 +44,7 @@ class _LocationDropDownMenuState extends State<LocationDropDownMenu> {
             child: Row(
               children: <Widget>[
                 Text(
-                  selectedCity,
+                  selectedCity.name,
                   style: Constant.dropDownStyle,
                 ),
                 Icon(
@@ -53,10 +54,10 @@ class _LocationDropDownMenuState extends State<LocationDropDownMenu> {
               ],
             ),
             itemBuilder: (BuildContext context) {
-              return widget.cities.map((String value) {
-                return PopupMenuItem<String>(
-                  value: value,
-                  child: Text(value,style: Constant.dropDownItemStyle),
+              return widget.cities.map((Location city) {
+                return PopupMenuItem<Location>(
+                  value: city,
+                  child: Text(city.name,style: Constant.dropDownItemStyle),
                 );
               }).toList();
             },

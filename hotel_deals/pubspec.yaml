@@ -25,6 +25,7 @@ dependencies:
   cupertino_icons: ^0.1.2
   intl:
   cloud_firestore: ^0.9.0 # add this line
+  transparent_image:
 
 dev_dependencies:
   flutter_test:

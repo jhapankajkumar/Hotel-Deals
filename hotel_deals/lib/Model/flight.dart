@@ -1,11 +1,18 @@
-import 'package:flutter/widgets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Flight {
-  final String rating;
-  final String discount;
-  final String flightName;
-  final int oldPrice;
-  final int newPrice;
-  final String date;
-  const Flight({this.rating, this.discount, this.flightName, this.oldPrice, this.newPrice, this.date});
+  final String rating, date, discount, flightName;
+  final int oldPrice, newPrice;
+
+  Flight.fromMap(Map<String, dynamic> map)
+      : flightName = map['airlines'],
+        discount = map['discount'],
+        rating = map['rating'],
+        date = map['date'],
+        oldPrice = map['oldPrice'],
+        newPrice = map['newPrice'];
+
+ 
+
+  Flight.fromSnapshot(DocumentSnapshot snapshot) : this.fromMap(snapshot.data);
 }
