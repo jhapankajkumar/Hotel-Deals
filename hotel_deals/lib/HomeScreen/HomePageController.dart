@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:hotel_deals/FlightListScreen/FlightListScreen.dart';
 import 'package:hotel_deals/HomeScreen/LocationDropDownMenu.dart';
 import 'package:hotel_deals/HomeScreen/SearchTextFieldContainer.dart';
 import 'package:hotel_deals/Model/city.dart';
@@ -53,14 +54,31 @@ var desc = Text(
   textAlign: TextAlign.center,
 );
 
-
 class _HomeScreenTopContainerState extends State<HomeScreenTopContainer> {
   Location selectedCity;
-  void citySelected(Location city) {
-      setState(() {
-        selectedCity = city;
-      });
+  String toCity;
+  void _selectCity(Location city) {
+    setState(() {
+      selectedCity = city;
+    });
   }
+
+  void _searchButtonPressed(String searchedText) {
+    setState(() {
+      toCity = searchedText;
+    });
+
+    //Navigating to Flight list screen
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => InheritedFlightListScreen(
+                  fromLocation: selectedCity.name,
+                  toLocation: searchedText,
+                  child: FlightListScreen(),
+                )));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -85,7 +103,7 @@ class _HomeScreenTopContainerState extends State<HomeScreenTopContainer> {
                         AsyncSnapshot<QuerySnapshot> snapshot) {
                       if (snapshot.data != null) {
                         return _buildLocations(
-                            context, snapshot.data.documents);
+                            context, snapshot.data.documents, _selectCity);
                       } else {
                         return Center(
                           child: CircularProgressIndicator(),
@@ -103,7 +121,7 @@ class _HomeScreenTopContainerState extends State<HomeScreenTopContainer> {
                   height: 30,
                 ),
                 //TextField
-                SearchTextFieldContainer(),
+                SearchTextFieldContainer(_searchButtonPressed),
                 SizedBox(
                   height: 20,
                 ),
@@ -118,10 +136,11 @@ class _HomeScreenTopContainerState extends State<HomeScreenTopContainer> {
   }
 }
 
-Widget _buildLocations(BuildContext context, List<DocumentSnapshot> snapshots) {
+Widget _buildLocations(
+    BuildContext context, List<DocumentSnapshot> snapshots, Function callBack) {
   var locations =
       snapshots.map((snapshot) => Location.fromSnapshot(snapshot)).toList();
-  return LocationDropDownMenu(locations);
+  return LocationDropDownMenu(locations, callBack);
 }
 
 var homeScreenBottomContainer = Column(

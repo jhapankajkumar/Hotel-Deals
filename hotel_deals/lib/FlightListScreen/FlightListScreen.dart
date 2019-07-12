@@ -8,7 +8,22 @@ import 'package:hotel_deals/Model/flight.dart';
 
 // import '../Helper/Constants.dart';
 
+class InheritedFlightListScreen extends InheritedWidget {
+  final String fromLocation, toLocation;
+  InheritedFlightListScreen({Widget child, this.fromLocation, this.toLocation}) : super (child:child);
+  
+  @override
+  bool updateShouldNotify(InheritedWidget oldWidget) {
+    return null;
+  }
+  
+  static InheritedFlightListScreen of(BuildContext context) => context.inheritFromWidgetOfExactType(InheritedFlightListScreen);
+  
+}
+
+
 class FlightListScreen extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,12 +131,12 @@ class FlightListTopPart extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              'Boston (BOS)',
+                              InheritedFlightListScreen.of(context).fromLocation,
                               style: TextStyle(fontSize: 16.0),
                             ),
                             Divider(color: Colors.grey, height: 20.0),
                             Text(
-                              'New York City (JFK)',
+                              InheritedFlightListScreen.of(context).toLocation,
                               style: TextStyle(
                                   fontSize: 16.0, fontWeight: FontWeight.bold),
                             ),

@@ -4,7 +4,9 @@ import '../Helper/Constants.dart';
 
 class LocationDropDownMenu extends StatefulWidget {
   final List<Location> cities;
-  LocationDropDownMenu(this.cities);
+  final Function dropDownValueChanged;
+  
+  LocationDropDownMenu(this.cities, this.dropDownValueChanged);
 
   @override
   _LocationDropDownMenuState createState() => _LocationDropDownMenuState();
@@ -13,11 +15,13 @@ class LocationDropDownMenu extends StatefulWidget {
 class _LocationDropDownMenuState extends State<LocationDropDownMenu> {
   var selectedIndex = 0;
   Location selectedCity;
+  var onSelected;
 
   @override
   void initState() {
     selectedIndex = 0;
     selectedCity = widget.cities[0];
+    // widget.dropDownValueChanged(selectedCity);
     super.initState();
   }
 
@@ -39,7 +43,9 @@ class _LocationDropDownMenuState extends State<LocationDropDownMenu> {
             onSelected: (city) {
               setState(() {
                 selectedCity = city;
+                
               });
+              widget.dropDownValueChanged(city);
             },
             child: Row(
               children: <Widget>[
