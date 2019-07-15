@@ -25,20 +25,20 @@ class _SearchTextFieldContainerState extends State<SearchTextFieldContainer> {
         elevation: 5.0,
         borderRadius: BorderRadius.all(Radius.circular(30.0)),
         child: TextField(
-          maxLengthEnforced: true,
-          onChanged: (String text){
-            print(text);
-          },
-          onEditingComplete: (){
-            print('completed');
-          },
+          // maxLengthEnforced: true,
+          // onChanged: (String text){
+          //   print(text);
+          // },
+          // onEditingComplete: (){
+          //   print('completed');
+          // },
 
-          onSubmitted: (String string) {
-            FocusScope.of(context).requestFocus(new FocusNode());
-          },
-          onTap: (){
-            print('Tapped Text Field');
-          },
+          // onSubmitted: (String string) {
+          //   FocusScope.of(context).requestFocus(new FocusNode());
+          // },
+          // onTap: (){
+          //   print('Tapped Text Field');
+          // },
           
           controller: searchFieldController,
           style: Constant.dropDownItemStyle,

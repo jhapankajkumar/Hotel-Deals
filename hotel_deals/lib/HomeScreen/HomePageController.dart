@@ -58,15 +58,16 @@ class _HomeScreenTopContainerState extends State<HomeScreenTopContainer> {
   Location selectedCity;
   String toCity;
   void _selectCity(Location city) {
+    print('CITY: ' + city.name);
     setState(() {
       selectedCity = city;
     });
   }
 
   void _searchButtonPressed(String searchedText) {
-    setState(() {
-      toCity = searchedText;
-    });
+    // setState(() {
+    //   toCity = searchedText;
+    // });
 
     //Navigating to Flight list screen
     Navigator.push(
